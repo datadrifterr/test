@@ -16,7 +16,7 @@ tokenizer.chat_template = AutoTokenizer.from_pretrained(CHAT_TEMPLATE_ID).chat_t
 model = MambaLMHeadModel.from_pretrained(
         model_name, device=device, dtype=torch.float16)
 
-messages = []
+messages = []  # Maintain conversation history
 
 while True:
     prompt = input("Enter your prompt (type 'quit' to exit): ")
@@ -43,4 +43,5 @@ while True:
     )
 
     print(assistant_message)
+    messages.append(dict(role="assistant", content=assistant_message))  # Add the response to history
     print("---")  # Separator between conversations
