@@ -17,24 +17,30 @@ model = MambaLMHeadModel.from_pretrained(
         model_name, device=device, dtype=torch.float16)
 
 messages = []
-prompt = "Tell me 5 sites to visit in Spain"
-messages.append(dict(role="user", content=prompt))
 
-input_ids = tokenizer.apply_chat_template(
+while True:
+    prompt = input("Enter your prompt (type 'quit' to exit): ")
+    if prompt.lower() == "quit":
+        break
+
+    messages.append(dict(role="user", content=prompt))
+
+    input_ids = tokenizer.apply_chat_template(
             messages, return_tensors="pt", add_generation_prompt=True
-).to(device)
+    ).to(device)
 
-out = model.generate(
-    input_ids=input_ids,
-    max_length=2000,
-    temperature=0.9,
-    top_p=0.7,
-    eos_token_id=tokenizer.eos_token_id,
-)
+    out = model.generate(
+        input_ids=input_ids,
+        max_length=2000,
+        temperature=0.9,
+        top_p=0.7,
+        eos_token_id=tokenizer.eos_token_id,
+    )
 
-decoded = tokenizer.batch_decode(out)
-assistant_message = (
-    decoded[0].split("<|assistant|>\n")[-1].replace(eos_token, "")
-)
+    decoded = tokenizer.batch_decode(out)
+    assistant_message = (
+        decoded[0].split("<|assistant|>\n")[-1].replace(eos_token, "")
+    )
 
-print(assistant_message)
+    print(assistant_message)
+    print("---")  # Separator between conversations
